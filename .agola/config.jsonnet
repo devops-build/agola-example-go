@@ -9,6 +9,10 @@ local go_runtime(version, arch) = {
 local task_build_go(version, arch) = {
   name: 'build go ' + version + ' ' + arch,
   runtime: go_runtime(version, arch),
+  environment: {
+    GO111MODULE: 'on',
+    GOPROXY: 'https://goproxy.cn',
+  },  
   steps: [
     { type: 'clone' },
     { type: 'restore_cache', keys: ['cache-sum-{{ md5sum "go.sum" }}', 'cache-date-'], dest_dir: '/go/pkg/mod/cache' },
@@ -25,7 +29,7 @@ local task_build_go(version, arch) = {
       name: 'agola go example',
       tasks: [
         task_build_go(version, arch)
-        for version in ['1.11', '1.12']
+        for version in [/*'1.11', */'1.12']
         # uncomment additional archs if there's an available executor
         for arch in ['amd64' /*'arm64'*/]
       ] + [
